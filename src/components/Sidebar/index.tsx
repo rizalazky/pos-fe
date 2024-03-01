@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 import { BiCategory } from 'react-icons/bi'
 import { BsPeople } from 'react-icons/bs'
@@ -16,16 +17,16 @@ function Sidebar() {
         </div>
         <div className="p-6 pt-8">
             <ul className="menu bg-base-200 w-56 rounded-box">
-                <li><a><MdOutlineDashboard/>Dashboard</a></li>
+                <li><Link href={'/admin/dashboard'}><MdOutlineDashboard/>Dashboard</Link></li>
                 <li>
                     <details open>
                     <summary><FiDatabase/> Master</summary>
                     <ul>
-                        <li><a><BiCategory/> Product Category</a></li>
-                        <li><a><FaBalanceScale/> Product Unit</a></li>
-                        <li><a><FaListOl/> Product</a></li>
-                        <li><a><BsPeople/> Customer</a></li>
-                        <li><a><FiTruck/> Supplier</a></li>
+                        <li><Link href={'/admin/productcategory'}><BiCategory/> Product Category</Link></li>
+                        <li><Link href={'/admin/productunit'}><FaBalanceScale/> Product Unit</Link></li>
+                        <li><Link href={'/admin/product'}><FaListOl/> Product</Link></li>
+                        <li><Link href={'/admin/customer'}><BsPeople/> Customer</Link></li>
+                        <li><Link href={'/admin/supplier'}><FiTruck/> Supplier</Link></li>
                     </ul>
                     </details>
                 </li>
@@ -34,7 +35,6 @@ function Sidebar() {
                     <summary><GrTransaction/> Transaction</summary>
                     <ul>
                         <li><a><FiShoppingBag/>Sales</a></li>
-                        
                     </ul>
                     </details>
                 </li>
