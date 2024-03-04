@@ -1,3 +1,4 @@
+import Button from "./Button";
 import Input from "./Input";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -11,4 +12,5 @@ export{
     Stat,
     Table,
     Input,
+    Button,
 }
