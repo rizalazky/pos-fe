@@ -2,32 +2,29 @@ import Modal from '@/components/Modal';
 import Link from 'next/link';
 import React from 'react'
 import { FaPen, FaPlus, FaTrash } from 'react-icons/fa';
-import { create } from './actions';
+import { create, deleteData, getData } from './actions';
 import { Input } from '@/components';
 
-
-const getData = async ()=>{
-  const response = await fetch('http://localhost:4000/api/category',{
-    cache : 'no-store'
-  });
-  
-  return response.json()
-}
 
 export type Props = {
   searchParams : Record<string,string> | null | undefined
 }
 
 export interface categoriesInterface {
-  id : number,
-  name: string,
+  id? : number,
+  name?: string,
 }
 const ProductCategory= async (props : Props) => {
 
   const id = props.searchParams?.id;
   const openModal = props.searchParams?.modal ? true :false;
   const categories:categoriesInterface[] = await getData();
-
+  let categoryDetail:categoriesInterface = {
+    name: ''
+  };
+  if(id){
+    categoryDetail = await getData(id)
+  }
 
 
   return (
@@ -52,7 +49,10 @@ const ProductCategory= async (props : Props) => {
                         <td>{category.name}</td>
                         <td>
                           <Link href={`?modal=true&id=${category.id}`} className='btn btn-sm btn-circle btn-info mr-2 text-white'><FaPen/></Link>
-                          <button className='btn btn-sm btn-circle btn-error text-white'><FaTrash/></button>
+                          <form action={deleteData} method='delete'>
+                            <input type="hidden" name="id" value={category.id} />
+                            <button type='submit' className='btn btn-sm btn-circle btn-error text-white' ><FaTrash/></button>
+                          </form>
                         </td>
                     </tr>
                   )
@@ -65,11 +65,12 @@ const ProductCategory= async (props : Props) => {
       {openModal && (
         <Modal id={id} modalTitle='Form Category' redirect='/admin/productcategory'>
           <form action={create} method="post">
+            <input type="hidden" value={id} name='id' />
             <Input 
               label='Category Name'
               name='name'
               type="text"
-              value={""}
+              value={categoryDetail.name}
               placeholder='Type here...'
               required={true}
               />
