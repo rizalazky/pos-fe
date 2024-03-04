@@ -1,3 +1,4 @@
+import Input from "./Input";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Stat from "./Stat";
@@ -9,4 +10,5 @@ export{
     Sidebar,
     Stat,
     Table,
+    Input,
 }
