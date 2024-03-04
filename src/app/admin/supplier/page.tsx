@@ -11,26 +11,26 @@ export type Props = {
   searchParams : Record<string,string> | null | undefined
 }
 
-export interface customerInterface {
+export interface supplierInterface {
   id? : number,
-  customer_name : string,
+  supplier_name : string,
   phone_number:string
 }
 
 
 
-const Customer= async (props : Props) => {
+const Supplier= async (props : Props) => {
 
   const id = props.searchParams?.id;
   const action = props.searchParams?.action;
   const openModal = props.searchParams?.modal ? true :false;
-  const customers:customerInterface[] = await getData();
-  let customerDetail:customerInterface = {
-    customer_name: '',
+  const suppliers:supplierInterface[] = await getData();
+  let supplierDetail:supplierInterface = {
+    supplier_name: '',
     phone_number:''
   };
   if(id){
-    customerDetail = await getData(id)
+    supplierDetail = await getData(id)
   }
 
 
@@ -52,15 +52,15 @@ const Customer= async (props : Props) => {
             </thead>
             <tbody>
               {
-                customers.map((customer,index)=>{
+                suppliers.map((supplier,index)=>{
                   return(
-                    <tr key={customer.id}>
+                    <tr key={supplier.id}>
                         <th>{index + 1}</th>
-                        <td>{customer.customer_name}</td>
-                        <td>{customer.phone_number}</td> 
+                        <td>{supplier.supplier_name}</td>
+                        <td>{supplier.phone_number}</td> 
                         <td>
-                          <Link href={`?modal=true&id=${customer.id}`} className='btn btn-sm btn-circle btn-info mr-2 text-white'><FaPen/></Link>
-                          <Link href={`?modal=true&id=${customer.id}&action=delete`} className='btn btn-sm btn-circle btn-error mr-2 text-white'><FaTrash/></Link>
+                          <Link href={`?modal=true&id=${supplier.id}`} className='btn btn-sm btn-circle btn-info mr-2 text-white'><FaPen/></Link>
+                          <Link href={`?modal=true&id=${supplier.id}&action=delete`} className='btn btn-sm btn-circle btn-error mr-2 text-white'><FaTrash/></Link>
                         </td>
                     </tr>
                   )
@@ -71,20 +71,20 @@ const Customer= async (props : Props) => {
         </table>
       </div>
       {openModal && (
-        <Modal id={id} modalTitle='' redirect='/admin/customer'>
+        <Modal id={id} modalTitle='' redirect='/admin/supplier'>
           {
             action == 'delete' ? (
               <form action={deleteData} method="post">
                 <input type="hidden" value={id} name='id' />
                 <h1>Are you sure want to delete this record?</h1>
                 <div className="flex justify-end w-full mt-6">
-                  <Link href={'/admin/customer'} className='btn btn-secondary mr-2 text-white mb-6'>No</Link>
+                  <Link href={'/admin/supplier'} className='btn btn-secondary mr-2 text-white mb-6'>No</Link>
                   <button type="submit" className='btn btn-primary'>Yes</button>
                 </div>
               </form>
             ) : (
               <form action={create} method="post" className='mt-8'>
-                <Form id={id} customerDetail={customerDetail}/>
+                <Form id={id} supplierDetail={supplierDetail}/>
               </form>
             )
           }
@@ -95,4 +95,4 @@ const Customer= async (props : Props) => {
   )
 }
 
-export default Customer
+export default Supplier
