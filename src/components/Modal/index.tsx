@@ -6,13 +6,14 @@ type modalProps = {
   redirect : string,
   children: ReactNode,
   modalTitle : string,
+  largeModal? : boolean
 }
 
 
-function Modal({redirect,id,children,modalTitle}:modalProps) {
+function Modal({redirect,id,children,modalTitle,largeModal}:modalProps) {
   return (
     <dialog className="modal modal-open">
-      <div className="modal-box">
+      <div className={`modal-box ${largeModal && ' w-11/12 max-w-5xl'}`}>
         <form method="dialog">
           <Link href={redirect} className="btn btn-sm btn-circle btn-ghost absolute right-6 top-6">✕</Link>
         </form>

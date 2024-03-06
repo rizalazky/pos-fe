@@ -6,10 +6,11 @@ import { FaBalanceScale, FaListOl } from 'react-icons/fa'
 import { FiDatabase, FiSettings, FiShoppingBag, FiShoppingCart, FiTruck } from 'react-icons/fi'
 import { GrTransaction } from 'react-icons/gr'
 import { MdOutlineDashboard } from 'react-icons/md'
+import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 
 function Sidebar() {
   return (
-    <div className="flex flex-col flex-wrap bg-white  md:h-screen md:shadow-xl animated faster">
+    <div className="flex flex-col flex-wrap bg-white  min-h-screen md:shadow-xl animated faster">
         <div className="navbar bg-base-100">
         <div className="flex-1">
             <a className="btn btn-ghost text-xl">POS</a>
@@ -34,7 +35,9 @@ function Sidebar() {
                     <details open>
                     <summary><GrTransaction/> Transaction</summary>
                     <ul>
-                        <li><a><FiShoppingBag/>Sales</a></li>
+                        <li><Link href={'/admin/sales'}><FiShoppingBag/>Sales</Link></li>
+                        <li><Link href={'/admin/stockin'}><TbShoppingBagPlus/>Stock in</Link></li>
+                        <li><Link href={'/admin/stockout'}><TbShoppingBagMinus/>Stock out</Link></li>
                     </ul>
                     </details>
                 </li>
