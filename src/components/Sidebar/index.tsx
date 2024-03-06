@@ -3,7 +3,7 @@ import React from 'react'
 import { BiCategory } from 'react-icons/bi'
 import { BsPeople } from 'react-icons/bs'
 import { FaBalanceScale, FaListOl } from 'react-icons/fa'
-import { FiDatabase, FiSettings, FiShoppingBag, FiShoppingCart, FiTruck } from 'react-icons/fi'
+import { FiDatabase, FiSettings, FiShoppingBag, FiShoppingCart, FiTruck, FiUser, FiUsers } from 'react-icons/fi'
 import { GrTransaction } from 'react-icons/gr'
 import { MdOutlineDashboard } from 'react-icons/md'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
@@ -41,6 +41,8 @@ function Sidebar() {
                     </ul>
                     </details>
                 </li>
+                <li><Link href={'/admin/role'}><FiUser/>Roles</Link></li>
+                <li><Link href={'/admin/user'}><FiUsers/>Users</Link></li>
                 <li><a><FiSettings/> Setting</a></li>
             </ul>
 
