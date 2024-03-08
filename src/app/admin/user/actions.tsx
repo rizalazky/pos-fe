@@ -18,6 +18,7 @@ export const getRoles = async()=>{
 
 export const getData = async (id?:string)=>{
     const url = id ? `http://localhost:4000/api/user/${id}` : 'http://localhost:4000/api/user'
+    console.log('URL',url)
     const response = await fetch(url,{
       cache : 'no-store'
     });
@@ -27,11 +28,13 @@ export const getData = async (id?:string)=>{
 
 export async function create (formData : FormData){
     const id = formData.get('id');
+
+  
     
     const data = {
         usernamae : formData.get('usernamae'),
         password : formData.get('usernamae'),
-        image : formData.get('usernamae'),
+        image : formData.get('image'),
         address : formData.get('address'),
         role_id : formData.get('role_id'),
     }
@@ -41,9 +44,9 @@ export async function create (formData : FormData){
     const exec =await fetch(url,{
         method :method,
         headers :{
-            'Content-type' :'application/json'
+            // 'Content-type' :'multipart/form-data'
         },
-        body : JSON.stringify(data),
+        body : formData,
     });
     redirect('/admin/user')
     

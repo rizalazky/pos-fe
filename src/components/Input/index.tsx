@@ -34,8 +34,10 @@ const Input = ({label,type,value,name,placeholder,required, selectOption,classNa
         </select>
         break;
       case 'textarea':
-        return <textarea name={name} className={`textarea textarea-bordered ${className}`} placeholder={placeholder}>{value}</textarea>
+        return <textarea name={name} className={`textarea textarea-bordered ${className}`} defaultValue={value} placeholder={placeholder}></textarea>
         break;
+      case 'file':
+        return <input type={type} placeholder={placeholder} required={required} defaultValue={value} name={name} className={`file-input file-input-bordered w-full ${className}`} />
     
       default:
         return <input type={type} placeholder={placeholder} required={required} defaultValue={value} name={name} className={`input input-bordered w-full ${className}`} />

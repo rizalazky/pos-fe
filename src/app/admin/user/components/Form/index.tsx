@@ -18,14 +18,23 @@ type FormProps = {
 
 
 function Form({userDetail,id,roles}:FormProps) {
+    console.log('Form',userDetail);
   return (
     <>
-        <input type="hidden" value={id} name='id' />
+        <input type="hidden" value={id} name='id'/>
         <Input 
             label='Username'
             name='usernamae'
             type="text"
             value={userDetail.usernamae}
+            placeholder=''
+            required={true}
+            />
+        <Input 
+            label='Image'
+            name='image'
+            type="file"
+            value={userDetail.image}
             placeholder=''
             required={true}
             />
