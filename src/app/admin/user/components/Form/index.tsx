@@ -1,4 +1,5 @@
 import { Input } from '@/components'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
@@ -21,6 +22,19 @@ function Form({userDetail,id,roles}:FormProps) {
     console.log('Form',userDetail);
   return (
     <>
+        {
+            userDetail?.image && (
+                <div className='flex justify-center items-center'>
+                    <Image
+                        src={`http://localhost:4000/uploads/${userDetail.image}`}
+                        alt={`image-${userDetail.usernamae}`}
+                        width={100}
+                        height={100}
+                        className='rounded-full h-[150px] w-[150px]'
+                    />
+                </div>
+            )
+        }
         <input type="hidden" value={id} name='id'/>
         <Input 
             label='Username'
@@ -34,7 +48,7 @@ function Form({userDetail,id,roles}:FormProps) {
             label='Image'
             name='image'
             type="file"
-            value={userDetail.image}
+            value={""}
             placeholder=''
             required={true}
             />
