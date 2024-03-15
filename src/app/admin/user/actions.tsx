@@ -48,6 +48,13 @@ export async function create (formData : FormData){
         },
         body : formData,
     });
+
+    const response = await exec.json();
+    if(response.status == 'FAIL'){ 
+        return {
+            errors: response.errors 
+        };
+    }
     redirect('/admin/user')
     
 }

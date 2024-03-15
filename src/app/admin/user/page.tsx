@@ -71,9 +71,9 @@ const Customer= async (props : Props) => {
                 </div>
               </form>
             ) : (
-              <form action={create} method="post" className='mt-8'>
+              
                 <Form roles={roles} id={id} userDetail={userDetail}/>
-              </form>
+              
             )
           }
           
