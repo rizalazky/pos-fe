@@ -4,6 +4,7 @@ import { Navbar, Sidebar } from "@/components";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,19 +20,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex bg-white min-h-screen w-full">
+        <div className="flex bg-white min-h-screen max-h-screen overflow-scroll w-full">
           <Sidebar/>
-          <div className="content w-full">
+          <div className="content w-full h-full">
             <Navbar/>
             <div className="p-6 pt-8">
-            <div className="text-sm breadcrumbs mb-6">
-              <ul>
-                <li><a>Home</a></li> 
-                <li><a>Documents</a></li> 
-                <li>Add Document</li>
-              </ul>
-            </div>
+              <div className="text-sm breadcrumbs mb-6">
+                <ul>
+                  <li><a>Home</a></li> 
+                  <li><a>Documents</a></li> 
+                  <li>Add Document</li>
+                </ul>
+              </div>
+              
               {children}
+              
             </div>
           </div>
         </div>
