@@ -1,5 +1,7 @@
 'use server'
 import { redirect } from "next/navigation";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, PromiseLikeOfReactNode } from "react";
+import { ToastContentProps, toast } from "react-toastify";
 
 
 export const getData = async (id?:string)=>{
@@ -28,8 +30,14 @@ export async function create (formData : FormData){
         },
         body : JSON.stringify(data),
     });
-    redirect('/admin/role')
-    
+    let response = await exec.json()
+    console.log(response)
+    if(response.status == 'FAIL'){ 
+        return {
+            errors: response.errors 
+        };
+    }
+    redirect('/admin/role') 
 }
 
 export async function deleteData(formData:FormData){

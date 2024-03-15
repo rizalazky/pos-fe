@@ -8,6 +8,7 @@ import Form from './components/Form';
 import { Table } from './components';
 
 
+
 export type Props = {
   searchParams : Record<string,string> | null | undefined
 }
@@ -44,7 +45,7 @@ const Role= async (props : Props) => {
         <Modal id={id} modalTitle='' redirect='/admin/role'>
           {
             action == 'delete' ? (
-              <form action={deleteData} method="post">
+              <form action={deleteData}>
                 <input type="hidden" value={id} name='id' />
                 <h1>Are you sure want to delete this record?</h1>
                 <div className="flex justify-end w-full mt-6">
@@ -53,9 +54,7 @@ const Role= async (props : Props) => {
                 </div>
               </form>
             ) : (
-              <form action={create} method="post" className='mt-8'>
                 <Form id={id} roleDetail={roleDetail}/>
-              </form>
             )
           }
           
