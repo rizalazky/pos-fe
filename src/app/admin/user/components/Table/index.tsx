@@ -7,6 +7,7 @@ import { FaPen, FaTrash } from 'react-icons/fa'
 interface userInterface {
     id:number,
     usernamae:string,
+    name:string,
     image: string,
     Role: {
         role_name?:string
@@ -28,6 +29,7 @@ function Table({users}:TableProps) {
                 <th>#</th>
                 <th>Image</th>
                 <th>Username</th>
+                <th>Full Name</th>
                 <th>Address</th>
                 <th>Role</th>
                 <th>Actions</th>
@@ -41,6 +43,7 @@ function Table({users}:TableProps) {
                     <th>{index + 1}</th>
                     <td> <Image alt='image' src={`http://localhost:4000/uploads/${user.image}`} width={100} height={100}/></td>
                     <td>{user.usernamae}</td>
+                    <td>{user.name}</td>
                     <td>{user.address}</td> 
                     <td>{user.Role.role_name}</td> 
                     <td>

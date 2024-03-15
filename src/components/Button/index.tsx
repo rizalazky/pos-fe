@@ -4,12 +4,13 @@ import React, { ReactNode } from 'react'
 type ButtonProps = {
     label : ReactNode,
     className : string,
-    onClick : React.MouseEventHandler
+    onClick : React.MouseEventHandler,
+    type: string
 }
 
-function Button({className,onClick,label}:ButtonProps) {
+function Button({className,onClick,label,type}:ButtonProps) {
   return (
-    <button onClick={onClick} className={className}>
+    <button onClick={onClick} className={className} type='button'>
         {label}
     </button>
   )

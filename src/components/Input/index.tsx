@@ -13,7 +13,8 @@ type inputProps = {
     }[],
     className? : string,
     isLabelInside? : boolean,
-    icon? : React.ReactNode
+    icon? : React.ReactNode,
+   
 }
 
 const Input = ({label,type,value,name,placeholder,required, selectOption,className,isLabelInside,icon}:inputProps) => {

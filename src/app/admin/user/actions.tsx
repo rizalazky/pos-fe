@@ -29,15 +29,6 @@ export const getData = async (id?:string)=>{
 export async function create (formData : FormData){
     const id = formData.get('id');
 
-  
-    
-    const data = {
-        usernamae : formData.get('usernamae'),
-        password : formData.get('usernamae'),
-        image : formData.get('image'),
-        address : formData.get('address'),
-        role_id : formData.get('role_id'),
-    }
 
     const url = id ? `http:localhost:4000/api/user/${id}` : 'http:localhost:4000/api/user'
     const method = id ? 'PUT' : 'POST'
