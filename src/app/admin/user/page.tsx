@@ -20,7 +20,8 @@ interface userInterface {
   address: string,
   Role:{
     role_name:string
-  }
+  },
+  name:string
 }
 
 interface RoleInterface{
@@ -45,7 +46,8 @@ const Customer= async (props : Props) => {
     id:0,
     Role:{
       role_name:''
-    }
+    },
+    name:''
   };
   if(id){
     userDetail = await getData(id)
