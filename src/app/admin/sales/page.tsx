@@ -1,10 +1,12 @@
+'use client'
 import { Input } from '@/components'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa'
-import { addTotransactionDetail, deleteTransactionDetail, getCustomers, getSelectedProduct, getSubTotal, getTransactionDetail, getTransactionsDetail, updateTransactionDetail } from './actions'
 import Modal from '@/components/Modal'
 import { ProductTable } from './components'
 import Link from 'next/link'
+import { getCustomers, getProducts, processTransaction } from './actions'
+import TransactionItems from './components/TransactionItems'
 
 export type Props = {
   searchParams : Record<string,string> | null | undefined
@@ -13,20 +15,148 @@ type customerType = {
   text : string,
   value : string,
 }
-async function Sales(props:Props) {
-  const customers:customerType[] = await getCustomers();
-  const modal = props.searchParams?.modal
-  const id = props.searchParams?.id
-  const action = props.searchParams?.action
 
-  const transactionDetail = getTransactionsDetail()
-  const selectedProduct = await getSelectedProduct()
+interface transactionDetailInterface {
+  id : number,
+  product_name?: string,
+  code? : string,
+  price: number,
+  discount : number,
+  qty : number,
+  unit? : string
+}
 
-  const transactionDetailItem = await getTransactionDetail(Number(id));
+interface productInterface{
+  id : number,
+  product_name?: string,
+  code? : string,
+  category_id?: string,
+  unit_id?: string,
+  price: number,
+  stock?: string,
+  description?: string,
+  ProductCategory? : {
+    name: string
+  },
+  ProductUnit? : {
+    unit_name : string
+  },
+  discount? : number,
+  qty? : number,
+}
 
-  const subTotal = getSubTotal()
+interface transactionInterface{
+  date : Date,
+  user_by : string,
+  customer_id : string,
+  transactionDetail : transactionDetailInterface[],
+  discount : number,
+  cash : number,
+  note:string
+}
 
-  console.log(transactionDetailItem)
+function Sales(props:Props) {
+  const [customers,setCustomers] = useState<customerType[]>([])
+  const [modal,setModal] = useState(false)
+  const [actionModal,setActionModal] = useState('')
+  const [transaction,setTransaction]=useState<transactionInterface>({
+    date : new Date(),
+    user_by: '',
+    customer_id : '',
+    transactionDetail:[],
+    discount : 0,
+    cash : 0,
+    note : ''
+  });
+  const [products,setProducts] = useState([])
+  const [subTotal,setSubTotal] = useState(0)
+  const [selectedProduct,setSelectedProduct] = useState<productInterface | null>(null) 
+  const [selectedTransactionDetail,setSelectedTransactionDetail]  = useState<transactionDetailInterface | null>(null)
+  const [note,setNote] = useState('')
+
+
+  const getCustomerData = async ()=>{
+    let data = await getCustomers()
+    setCustomers(data)
+  }
+
+  const getProductData = async ()=>{
+    let dataProducts = await getProducts()
+    setProducts(dataProducts)
+  }
+
+  useEffect(()=>{
+    getCustomerData()
+    getProductData()
+  },[])
+
+  useEffect(()=>{
+    console.log('FIRED')
+    if(transaction.transactionDetail.length > 0){
+      let sum : number = transaction.transactionDetail?.map(trx=>{
+          return (trx.price * trx.qty) - trx.discount
+      }).reduce((a,b)=>{
+          return a + b
+      })
+
+      console.log('SUMM',sum)
+
+      setSubTotal(sum)
+    }
+  },[transaction])
+
+  const handleChangeTransaction = (obj:object)=>{
+    setTransaction({...transaction,...obj})
+  }
+
+  const addTransactionDetail = (e:any)=>{
+    e.preventDefault()
+    let qty = e.target.qty.value;
+    let transactionDetail = transaction.transactionDetail;
+    
+    const checkIfExist = transactionDetail.find(trx=>trx.id == selectedProduct?.id)
+    if(selectedProduct && !checkIfExist){
+      transactionDetail.push({
+          id : selectedProduct.id,
+          code : selectedProduct.code,
+          product_name: selectedProduct.product_name,
+          price : selectedProduct.price,
+          qty : Number(qty),
+          discount : 0,
+          unit : selectedProduct.ProductUnit?.unit_name 
+      })
+    }
+    handleChangeTransaction({transactionDetail : transactionDetail})
+    setSelectedProduct(null)
+  }
+
+  const deleteTransactionDetail = (e:any)=>{
+    e.preventDefault()
+    let transactionDetail = transaction.transactionDetail;
+    transactionDetail.splice(transactionDetail.findIndex( trx => trx.id == Number(selectedTransactionDetail?.id)) , 1)
+    handleChangeTransaction({transactionDetail : transactionDetail})
+    setSelectedTransactionDetail(null)
+    setModal(false)
+  }
+
+  const updateTransactionDetail = async (e:any)=>{
+    
+    const id = selectedTransactionDetail?.id
+    const qty = e.target.qty.value
+    const discount = e.target.discount.value
+
+    let transactionDetail = transaction.transactionDetail;
+    const itemIndex = transactionDetail.findIndex( trx => trx.id == Number(id))
+    transactionDetail[itemIndex].qty = Number(qty)
+    transactionDetail[itemIndex].discount = Number(discount)
+    handleChangeTransaction({transactionDetail : transactionDetail})
+    setSelectedTransactionDetail(null)
+    setModal(false)
+  }
+  
+
+  
+  
   return (
     <div className='bg-white'>
       <div className="flex w-full justify-between gap-8">
@@ -38,6 +168,8 @@ async function Sales(props:Props) {
             required={true}
             className='mt-0'
             isLabelInside
+            onChange={(e)=>handleChangeTransaction({date:e})}
+            value={transaction.date.toLocaleDateString('en-CA')}
           />
           <Input
             label='Casier'
@@ -47,6 +179,8 @@ async function Sales(props:Props) {
             required
             className='mt-0'
             isLabelInside
+            value={transaction.user_by}
+            readOnly
           />
           <Input
             label='Customer'
@@ -56,10 +190,12 @@ async function Sales(props:Props) {
             className='mt-0'
             isLabelInside
             selectOption={customers}
+            value={transaction.customer_id}
+            onChange={(e)=>handleChangeTransaction({customer_id:e})}
           />
         </div>
         <div className="card shadow-lg p-4 w-full">
-          <form action={addTotransactionDetail}>
+          <form onSubmit={addTransactionDetail}>
             <Input
               label='Product'
               name='product_id'
@@ -67,8 +203,9 @@ async function Sales(props:Props) {
               required={true}
               className='mt-0'
               isLabelInside
-              icon={<Link href={'?modal=true'}><FaSearch/></Link>}
+              icon={<i onClick={()=>setModal(true)}><FaSearch/></i>}
               value={selectedProduct?.product_name}
+              readOnly
             />
             <Input
               label='Qty'
@@ -86,48 +223,21 @@ async function Sales(props:Props) {
         </div>
         <div className="card shadow-lg p-4 w-full">
           <h1>Invoice {`INV123456`}</h1>
-          Grand Total : {subTotal}
+          Grand Total : {subTotal - transaction.discount}
         </div>
       </div>
-      <div className="card flex w-full my-4 shadow-lg p-6">
-        <h1 className='my-4'>Items</h1>
-        <table className='table'>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Product Name</th>
-              <th>Unit</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th>Discount</th>
-              <th>Total</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              transactionDetail?.map((item,index)=>{
-                return(
-                  <tr key={index}>
-                    <td>{item.code}</td>
-                    <td>{item.product_name}</td>
-                    <td>{item.unit}</td>
-                    <td>{item.price}</td>
-                    <td>{item.qty}</td>
-                    <td>{item.discount}</td>
-                    <td>{(Number(item.price) * item.qty) - item.discount}</td>
-                    <td>
-                      <Link href={`?modal=true&id=${item.id}`} className='btn btn-sm btn-circle btn-info mr-2 text-white'><FaPen/></Link>
-                      <Link href={`?modal=true&id=${item.id}&action=delete`} className='btn btn-sm btn-circle btn-error mr-2 text-white'><FaTrash/></Link>
-                    </td>
-                  </tr>
-                )
-              })
-            }
-            
-          </tbody>
-        </table>
-      </div>
+      <TransactionItems
+        transactionDetail={transaction.transactionDetail}
+        onClickEdit={(param)=>{
+          setModal(true)
+          setSelectedTransactionDetail(param)
+        }}
+        onClickDelete={(param)=>{
+          setModal(true);
+          setSelectedTransactionDetail(param)
+          setActionModal('delete')
+        }}
+      />   
       <div className="flex w-full justify-between gap-4">
         <div className="card shadow-lg p-4 w-full">
           <Input
@@ -137,7 +247,7 @@ async function Sales(props:Props) {
             required={true}
             isLabelInside
             value={subTotal}
-
+            readOnly
           />
           <Input
             label='Discount'
@@ -146,6 +256,8 @@ async function Sales(props:Props) {
             type='text'
             required
             isLabelInside
+            value={transaction.discount}
+            onChange={(e)=>handleChangeTransaction({discount:e.target.value})}
           />
           <Input
             label='Grand Total'
@@ -153,24 +265,29 @@ async function Sales(props:Props) {
             type='text'
             required
             isLabelInside
+            value={subTotal - transaction.discount}
+            readOnly
           />
         </div>
         <div className="card shadow-lg p-4 w-full">
           <Input
             label='Cash'
             name='cash'
-            type='text'
+            type='number'
             required={true}
             isLabelInside
-
+            onChange={(e)=>handleChangeTransaction({cash:e.target.value})}
+            value={transaction.cash}
           />
           <Input
             label='Change'
             name='change'
             // value={} // session
-            type='text'
+            type='number'
             required
             isLabelInside
+            value={transaction.cash - (subTotal - transaction.discount) }
+            readOnly={true}
           />
           
         </div>
@@ -180,14 +297,18 @@ async function Sales(props:Props) {
             name='note'
             type='textarea'
             required={true}
-
+            onChange={(e)=>handleChangeTransaction({note : e.target.value})}
+            value={transaction.note}
           />
           
         </div>
       </div>
       <div className="flex w-full justify-end gap-4 mt-4">
         <button className='btn btn-warning'>Cancel</button>
-        <button className='btn btn-info'>Process</button>
+        <button className='btn btn-info' onClick={()=>{
+          
+          processTransaction(transaction)
+        }}>Process</button>
       </div>
       {
         modal && (
@@ -195,34 +316,35 @@ async function Sales(props:Props) {
             redirect='/admin/sales'
             id=''
             modalTitle=''
-            largeModal={!id}
+            largeModal={!selectedTransactionDetail}
+            closeModal={()=>setModal(false)}
           >
             <div className='my-4'></div>
             {
-              id ? action == 'delete' ? (
-                <form action={deleteTransactionDetail} method="post">
-                  <input type="hidden" value={id} name='id' />
+              selectedTransactionDetail ? actionModal == 'delete' ? (
+                <form onSubmit={deleteTransactionDetail} >
+                  <input type="hidden" value={selectedTransactionDetail.id} name='id' />
                   <h1>Are you sure want to delete this record?</h1>
                   <div className="flex justify-end w-full mt-6">
-                    <Link href={'/admin/sales'} className='btn btn-secondary mr-2 text-white mb-6'>No</Link>
+                    <button type='button' onClick={()=>{setModal(false);setActionModal('')}} className='btn btn-secondary mr-2 text-white mb-6'>No</button>
                     <button type="submit" className='btn btn-primary'>Yes</button>
                   </div>
               </form>
               ) : (
-                <form action={updateTransactionDetail} method="post">
-                  <input type="hidden" value={id} name='id' />
+                <form onSubmit={updateTransactionDetail} >
+                  <input type="hidden" value={selectedTransactionDetail.id} name='id' />
                   <Input
                     label='Code Product'
                     name='code'
                     type='text'
-                    value={transactionDetailItem?.code}
+                    value={selectedTransactionDetail?.code}
                     required
                   />
                   <Input
                     label='Product name'
                     name='product_name'
                     type='text'
-                    value={transactionDetailItem?.product_name}
+                    value={selectedTransactionDetail?.product_name}
                     required
                   />
                   <div className="flex gap-4">
@@ -230,14 +352,14 @@ async function Sales(props:Props) {
                       label='Unit'
                       name='unit'
                       type='text'
-                      value={transactionDetailItem?.unit}
+                      value={selectedTransactionDetail?.unit}
                       required
                     />
                     <Input
                       label='Price'
                       name='price'
                       type='text'
-                      value={transactionDetailItem?.price}
+                      value={selectedTransactionDetail?.price}
                       required
                     />
                   </div>
@@ -246,24 +368,24 @@ async function Sales(props:Props) {
                       label='Qty'
                       name='qty'
                       type='text'
-                      value={transactionDetailItem?.qty}
+                      defaultValue={selectedTransactionDetail?.qty}
                       required
                     />
                     <Input
                       label='Discount'
                       name='discount'
                       type='text'
-                      value={transactionDetailItem?.discount}
+                      defaultValue={selectedTransactionDetail?.discount}
                       required
                     />
                   </div>
                   <div className="flex justify-end w-full mt-6">
-                    <Link href={'/admin/sales'} className='btn btn-secondary mr-2 text-white mb-6'>Close</Link>
+                    <button type='button' onClick={()=>{setModal(false);setActionModal('')}} className='btn btn-secondary mr-2 text-white mb-6'>Close</button>
                     <button type="submit" className='btn btn-primary'>Update</button>
                   </div>
                 </form>
               ) : (
-                <ProductTable/>
+                <ProductTable products={products} handlePickProduct={(param)=>{setSelectedProduct(param);setModal(false)}}/>
               )
             }
             

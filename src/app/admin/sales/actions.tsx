@@ -1,26 +1,5 @@
 'use server'
 
-import { redirect } from "next/navigation"
-
-interface productInterface {
-    id : number,
-    product_name?: string,
-    code? : string,
-    category_id?: string,
-    unit_id?: string,
-    price: number,
-    stock?: string,
-    description?: string,
-    ProductCategory? : {
-      name: string
-    },
-    ProductUnit? : {
-      unit_name : string
-    },
-    discount? : number,
-    qty? : number,
-}
-
 interface transactionDetailInterface {
     id : number,
     product_name?: string,
@@ -35,22 +14,13 @@ interface transactionInterface{
     date : Date,
     user_by : string,
     customer_id : string,
-    transactionsDetail : transactionInterface,
+    transactionDetail : transactionDetailInterface[],
     discount : number,
     cash : number,
     note:string
 }
 
-const transactionDetail:transactionDetailInterface[] = []
 
-let pickProduct:productInterface;
-
-let transaction:transactionInterface;
-
-
-export const getTransactionsDetail = ()=>{
-    return transactionDetail
-}
 
 export const getCustomers = async()=>{
     const response = await fetch('http://localhost:4000/api/customer',{
@@ -81,64 +51,34 @@ export const getProducts = async (id?:string)=>{
     return response.json()
 }
 
-export const getTransactionDetail = async(id:number)=>{
-    return transactionDetail.find(trx=>trx.id == id)
-}
-
-export const addTotransactionDetail = async(formData:FormData)=>{
-    const qty = formData.get('qty');
-    const checkIfExist =await getTransactionDetail(pickProduct.id)
-    if(checkIfExist) return false;
-    transactionDetail.push({
-        id : pickProduct.id,
-        code : pickProduct.code,
-        product_name: pickProduct.product_name,
-        price : pickProduct.price,
-        qty : Number(qty),
-        discount : 0,
-        unit : pickProduct.ProductUnit?.unit_name 
-    })
-    redirect('/admin/sales')
-}
-
-export const deleteTransactionDetail = (formData : FormData)=>{
-    const id = formData.get('id');
-
-    transactionDetail.splice(transactionDetail.findIndex( trx => trx.id == Number(id)) , 1)
-    redirect('/admin/sales')
-}
-
-export const updateTransactionDetail = async (formData : FormData)=>{
-    
-    const id = formData.get('id')
-    const qty = formData.get('qty')
-    const discount = formData.get('discount')
-    const itemIndex = transactionDetail.findIndex( trx => trx.id == Number(id))
-    transactionDetail[itemIndex].qty = Number(qty)
-    transactionDetail[itemIndex].discount = Number(discount)
-    
-    redirect('/admin/sales')
-}
-
-export const selectProduct = (product:productInterface)=>{
-    pickProduct = product
-}
-
-export const getSelectedProduct = async()=>{
-    return pickProduct
-}
-
-export const getSubTotal = ()=>{
-    if(transactionDetail.length > 0){
-        let sum : number = transactionDetail?.map(trx=>{
-            return (trx.price * trx.qty) - trx.discount
-        }).reduce((a,b)=>{
-            return a + b
-        })
-    
-        return sum;
+export const processTransaction = async(dataTransaction:transactionInterface)=>{
+    let dataToPost = {
+        customer_id : dataTransaction.customer_id,
+        discount: dataTransaction.discount,
+        transaction_date : dataTransaction.date,
+        cash : dataTransaction.cash,
+        notes : dataTransaction.note,
+        user_by : dataTransaction.user_by,
+        transaction_items : dataTransaction.transactionDetail
     }
+
+    const url = 'http://localhost:4000/api/sales';
+    const exec = await fetch(url,{
+        method : 'POST',
+        headers :{
+            'Content-type' :'application/json'
+        },
+        body : JSON.stringify(dataToPost),
+    })
+
+    const response = await exec.json();
+    console.log(response.data)
 }
+
+
+
+
+
 
 
 

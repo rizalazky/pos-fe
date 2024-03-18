@@ -1,8 +1,6 @@
-import React from 'react'
-import { addTotransactionDetail, getProducts, selectProduct } from '../../actions'
-import { FaMouse, FaMousePointer } from 'react-icons/fa'
+import React, { MouseEventHandler } from 'react'
+
 import { CiPickerEmpty } from 'react-icons/ci'
-import { redirect } from 'next/navigation'
 
 
 interface productInterface {
@@ -22,9 +20,9 @@ interface productInterface {
     },
 }
 
-async function ProductTable() {
+function ProductTable({ products, handlePickProduct}:{products:productInterface[],handlePickProduct:(param:productInterface)=>void}) {
 
-    const products:productInterface[] = await getProducts()
+    
     return (
         <div className="overflow-x-auto">
             <table className="table">
@@ -54,16 +52,7 @@ async function ProductTable() {
                             <td>{product.stock}</td>
                             <td>{product.description}</td>
                             <td>
-                                <form 
-                                    action={ async()=>{
-                                        'use server'
-                                        selectProduct(product)
-                                        redirect('/admin/sales')
-                                    }} 
-                                    method="post">
-                                    <input type="hidden" name="id" value={product.id} />
-                                    <button type='submit' className='btn btn-sm btn-primary'><CiPickerEmpty/></button>
-                                </form>
+                                <button type='submit' className='btn btn-sm btn-primary' onClick={()=>handlePickProduct(product)}><CiPickerEmpty/></button>
                             </td>
                         </tr>
                     )
