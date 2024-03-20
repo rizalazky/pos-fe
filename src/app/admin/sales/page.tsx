@@ -7,6 +7,7 @@ import { ProductTable } from './components'
 import Link from 'next/link'
 import { getCustomers, getProducts, processTransaction } from './actions'
 import TransactionItems from './components/TransactionItems'
+import { toast } from 'react-toastify'
 
 export type Props = {
   searchParams : Record<string,string> | null | undefined
@@ -90,6 +91,12 @@ function Sales(props:Props) {
     getProductData()
   },[])
 
+  const handlePickProduct = async(param:productInterface)=>{
+    
+    setSelectedProduct(param);
+    setModal(false)
+  }
+
   useEffect(()=>{
     console.log('FIRED')
     if(transaction.transactionDetail.length > 0){
@@ -113,6 +120,19 @@ function Sales(props:Props) {
     e.preventDefault()
     let qty = e.target.qty.value;
     let transactionDetail = transaction.transactionDetail;
+    if(Number(qty) > Number(selectedProduct?.stock)){
+      toast.error('The quantity entered exceeds available stock!',{
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      })
+      return false;
+    }
     
     const checkIfExist = transactionDetail.find(trx=>trx.id == selectedProduct?.id)
     if(selectedProduct && !checkIfExist){
@@ -204,7 +224,7 @@ function Sales(props:Props) {
               className='mt-0'
               isLabelInside
               icon={<i onClick={()=>setModal(true)}><FaSearch/></i>}
-              value={selectedProduct?.product_name}
+              value={selectedProduct?.product_name || ''}
               readOnly
             />
             <Input
@@ -385,7 +405,7 @@ function Sales(props:Props) {
                   </div>
                 </form>
               ) : (
-                <ProductTable products={products} handlePickProduct={(param)=>{setSelectedProduct(param);setModal(false)}}/>
+                <ProductTable products={products} handlePickProduct={handlePickProduct}/>
               )
             }
             

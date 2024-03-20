@@ -17,10 +17,10 @@ type inputProps = {
     icon? : React.ReactNode,
     onChange?:(value:any)=>void ,
     readOnly? : boolean,
-    defaultValue? : any | ''
+    defaultValue? : any | null
 }
 
-const InputComponent = ({type,value,defaultValue='',name,placeholder,required, selectOption,className ,onChange=()=>{},readOnly}:inputProps)=>{
+const InputComponent = ({type,value,defaultValue,name,placeholder,required, selectOption,className ,onChange=()=>{},readOnly}:inputProps)=>{
   switch (type) {
     case 'select':
       return (
@@ -47,7 +47,7 @@ const InputComponent = ({type,value,defaultValue='',name,placeholder,required, s
   }
 }
 
-const Input = ({label,type,value,defaultValue='',name,placeholder,required, selectOption,className,isLabelInside,icon,onChange=()=>{},readOnly}:inputProps) => {
+const Input = ({label,type,value,defaultValue,name,placeholder,required, selectOption,className,isLabelInside,icon,onChange=()=>{},readOnly}:inputProps) => {
   
 
 

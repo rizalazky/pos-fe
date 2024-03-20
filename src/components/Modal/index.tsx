@@ -7,17 +7,22 @@ type modalProps = {
   children: ReactNode,
   modalTitle : string,
   largeModal? : boolean,
-  closeModal? :MouseEventHandler
+  closeModal? :MouseEventHandler | null
 }
 
 
-function Modal({redirect,id,children,modalTitle,largeModal,closeModal=()=>{}}:modalProps) {
+function Modal({redirect,id,children,modalTitle,largeModal,closeModal}:modalProps) {
   return (
     <dialog className="modal modal-open">
       <div className={`modal-box ${largeModal && ' w-11/12 max-w-5xl'}`}>
         <form method="dialog">
-          
-          <Link onClick={closeModal} href={redirect} className="btn btn-sm btn-circle btn-ghost absolute right-6 top-6">✕</Link>
+          {
+            closeModal ? (
+              <Link onClick={closeModal} href={redirect} className="btn btn-sm btn-circle btn-ghost absolute right-6 top-6">✕</Link>
+            ) : ( 
+              <Link  href={redirect} className="btn btn-sm btn-circle btn-ghost absolute right-6 top-6">✕</Link>
+            )
+          }
         </form>
         <h3 className="font-bold text-lg mb-2">{modalTitle}</h3>
         {children}

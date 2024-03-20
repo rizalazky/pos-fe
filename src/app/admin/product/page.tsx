@@ -97,7 +97,7 @@ const Product= async (props : Props) => {
         <Modal id={id} modalTitle='' redirect='/admin/product'>
           {
             action == 'delete' ? (
-              <form action={deleteData} method="post">
+              <form action={deleteData}>
                 <input type="hidden" value={id} name='id' />
                 <h1>Are you sure want to delete this record?</h1>
                 <div className="flex justify-end w-full mt-6">
@@ -106,7 +106,7 @@ const Product= async (props : Props) => {
                 </div>
               </form>
             ) : (
-              <form action={create} method="post" className='mt-8'>
+              <form action={create} className='mt-8'>
                 <input type="hidden" value={id} name='id' />
                 <input type="hidden" value={0} name='stock' />
                 <div className="flex gap-4">
@@ -114,7 +114,7 @@ const Product= async (props : Props) => {
                     label='Code'
                     name='code'
                     type="text"
-                    value={productDetail.code}
+                    defaultValue={productDetail.code}
                     placeholder=''
                     required={true}
                     />
@@ -123,7 +123,7 @@ const Product= async (props : Props) => {
                     name='category_id'
                     type="select"
                     selectOption={selectOptionCategory}
-                    value={productDetail.category_id}
+                    defaultValue={productDetail.category_id}
                     placeholder=''
                     required={true}
                     />
@@ -133,7 +133,7 @@ const Product= async (props : Props) => {
                   label='Product Name'
                   name='product_name'
                   type="text"
-                  value={productDetail.product_name}
+                  defaultValue={productDetail.product_name}
                   placeholder=''
                   required={true}
                   />
@@ -143,7 +143,7 @@ const Product= async (props : Props) => {
                     name='unit_id'
                     type="select"
                     selectOption={selectOptionProductUniut}
-                    value={productDetail.unit_id}
+                    defaultValue={productDetail.unit_id}
                     placeholder=''
                     required={true}
                     />
@@ -151,7 +151,7 @@ const Product= async (props : Props) => {
                       label='Price'
                       name='price'
                       type="number"
-                      value={productDetail.price}
+                      defaultValue={productDetail.price}
                       placeholder=''
                       required={true}
                       />
@@ -160,7 +160,7 @@ const Product= async (props : Props) => {
                   label='Description'
                   name='description'
                   type="textarea"
-                  value={productDetail.description}
+                  defaultValue={productDetail.description}
                   placeholder=''
                   required={true}
                   />

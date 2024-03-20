@@ -52,7 +52,7 @@ function ProductTable({ products, handlePickProduct}:{products:productInterface[
                             <td>{product.stock}</td>
                             <td>{product.description}</td>
                             <td>
-                                <button type='submit' className='btn btn-sm btn-primary' onClick={()=>handlePickProduct(product)}><CiPickerEmpty/></button>
+                                <button type='button' className='btn btn-sm btn-primary' disabled={Number(product.stock) == 0} onClick={()=>handlePickProduct(product)}><CiPickerEmpty/></button>
                             </td>
                         </tr>
                     )
