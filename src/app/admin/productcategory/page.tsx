@@ -74,7 +74,7 @@ const ProductCategory= async (props : Props) => {
                 </div>
               </form>
             ) : (
-              <form action={create} method="post">
+              <form action={create}>
                 <input type="hidden" value={id} name='id' />
                 <Input 
                   label='Category Name'

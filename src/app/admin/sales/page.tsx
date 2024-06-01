@@ -173,6 +173,38 @@ function Sales(props:Props) {
     setSelectedTransactionDetail(null)
     setModal(false)
   }
+
+  const process = async ()=>{
+    // window.print();
+    // return false;
+    const apiProcess = await processTransaction(transaction);
+    console.log('test',apiProcess);
+    if(apiProcess.status == 'OK'){
+      toast.success('Transaction Success!!',{
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      })
+      // print struck
+      window.location.reload();
+    }else{
+      toast.error('Transaction Failed!!',{
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      })
+    }
+  }
   
 
   
@@ -325,10 +357,7 @@ function Sales(props:Props) {
       </div>
       <div className="flex w-full justify-end gap-4 mt-4">
         <button className='btn btn-warning'>Cancel</button>
-        <button className='btn btn-info' onClick={()=>{
-          
-          processTransaction(transaction)
-        }}>Process</button>
+        <button className='btn btn-info' onClick={process}>Process</button>
       </div>
       {
         modal && (

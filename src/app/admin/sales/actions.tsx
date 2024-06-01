@@ -72,7 +72,8 @@ export const processTransaction = async(dataTransaction:transactionInterface)=>{
     })
 
     const response = await exec.json();
-    console.log(response.data)
+    // console.log(response.data)
+    return response;
 }
 
 
